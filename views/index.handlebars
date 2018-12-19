@@ -1,0 +1,79 @@
+<h1>Burgers</h1>
+
+<ul>
+  {{#each burger}}
+    {{#unless devoured}}
+        <li>
+        <p>
+            {{this.id}}. {{this.burger_name}}
+            {{#unless devoured}}
+                <button data-burgerid="{{this.id}}" class="devourBurger">
+                    Devour!
+                </button>
+            {{/unless}}
+        </p>
+        </li>
+    {{/unless}}
+  {{/each}}
+</ul>
+
+<h1>Finished Burgers</h1>
+
+<ul>
+  {{#each burger}}
+    {{#if devoured}}
+        <li>
+        <p>
+            {{this.id}}. {{this.burger_name}}
+            {{#unless devoured}}
+                <button data-burgerid="{{this.id}}" class="devourBurger">Devour!</button>
+            {{/unless}}
+        </p>
+        </li>
+    {{/if}}
+  {{/each}}
+</ul>
+
+<h2>Add a Burger</h2>
+<form id="addburger" class="button-size">
+	<textarea type="text" name="burger"></textarea>
+	<button type="submit">Add Burger!</button>
+</form>
+
+<script type="text/javascript">
+  $(".devourBurger").on("click", function(event) {
+    var id = $(this).data("burgerid");
+
+    // Send the DELETE request.
+    $.ajax("/api/burgers/" + id, {
+      type: "PUT"
+    }).then(
+      function() {
+        console.log("Updated id ", id);
+        // Reload the page to get the updated list
+        location.reload();
+      }
+    );
+  });
+
+  $("#addburger").on("submit", function(event) {
+    // Make sure to preventDefault on a submit event.
+    event.preventDefault();
+
+    var newBurger = {
+      burger: $("#addburger [name=burger]").val().trim()
+    };
+
+    // Send the POST request.
+    $.ajax("/api/burgers/", {
+      type: "POST",
+      data: newBurger
+    }).then(
+      function() {
+        console.log("added new movie");
+        // Reload the page to get the updated list
+        location.reload();
+      }
+    );
+  });
+</script>
